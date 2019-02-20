@@ -1,0 +1,80 @@
+rules:
+  - id: com.example.akiko.1
+    pattern:
+      regexp: (func) (foo|bar)\([^\(]*\)
+    message: |
+      fooやbarといった関数名は使わないでください。
+
+      意味のある関数名を定義しましょう。
+    glob:
+      - "**/*.go"
+    fail:
+      - func foo(), func bar()
+    pass:
+      - func say_hello()
+
+  - id: com.example.akiko.2
+    pattern:
+      regexp: var \p{Upper}+
+    message: |
+      変数はパッケージ外からアクセスしていいかどうかよく考えましょう。
+
+      変数の名称は短い方が好まれます。グローバル変数は意味のわかる名前にしておきましょう。
+      https://github.com/golang/go/wiki/CodeReviewComments#variable-names
+    glob:
+      - "**/*.go"
+
+  - id: com.example.akiko.3
+    pattern:
+      regexp: var \p{Lower}+
+    message: |
+      ローカル変数やスコープの短い変数は、短い文字列になるように工夫しましょう。
+
+      変数の名称は短い方が好まれます。ループの中でのみ使うような場合は、1,2文字をお勧めします
+      https://github.com/golang/go/wiki/CodeReviewComments#variable-names
+    glob:
+      - "**/*.go"
+    justification:
+      - 明確な意味をもたせたい場合は適度な長さでも構いません
+
+  - id: com.example.akiko.4
+    pattern:
+      regexp: errors\.New\(fmt\.Sprintf\("\p{Upper}+
+    message: |
+      エラーメッセージの先頭は小文字にしておきましょう。得てして他のコンテキストと合わさって出力されるからです。
+
+      Ref: https://github.com/golang/go/wiki/CodeReviewComments
+    glob:
+      - "**/*.go"
+    fail:
+      - errors.New(fmt.Errorf("Something bad")
+    pass:
+      - errors.New(fmt.Errorf("something bad")
+
+  - id: com.example.akiko.5
+    pattern:
+      regexp: fmt\.Errorf\("\p{Upper}+
+    message: |
+      エラーメッセージの先頭は小文字にしておきましょう。得てして他のコンテキストと合わさって出力されるからです。
+
+      Ref: https://github.com/golang/go/wiki/CodeReviewComments
+    glob:
+      - "**/*.go"
+    fail:
+      - fmt.Errorf("Something bad")
+    pass:
+      - fmt.Errorf("something bad")
+
+  - id: com.example.akiko.6
+    pattern:
+      regexp: ^[\s*//]\spanic\([^\(]*\)
+    message: |
+      できるだけパニック (panic()) の利用は避けましょう。
+
+      基本的にはerrorと複数の戻り値を使ってエラーハンドリングを行なって下さい。
+      どうしてもRuntimeエラーとして処理を中断させる必要がある場合での利用をして下さい。
+      Ref: https://golang.org/doc/effective_go.html#panic
+    glob:
+      - "**/*.go"
+    justification:
+      - 例えば初期化の際に、必須の値が取得できないようなケースで、panicを利用して中断するといった場合が該当します。
