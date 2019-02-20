@@ -1,11 +1,12 @@
 package main
 
 import (
+	"./local"
 	"errors"
 	"fmt"
 	"log"
 	"os"
-	"./local"
+	"math/rand"
 )
 
 var home   = os.Getenv("HOME")
@@ -25,6 +26,12 @@ func main() {
 	// エラーの場合はここには到達しません
 	foo()
 	bar()
+
+	// ランダムな整数を出力する
+	// rand.Seed(time.Now().UnixNano())
+	for i := 0; i < 2; i++ {
+		fmt.Println(rand.Int())
+	}
 }
 
 
@@ -41,7 +48,7 @@ func bar() {
 }
 
 func sample() error {
-	if user != "takano" {
+	if user != "akiko" {
 		// panic
 		panic("$USERがtakanoではありません、panicで終了....。")
 
@@ -50,3 +57,4 @@ func sample() error {
 	log.Printf("Hello world from %s", user)
 	return nil
 }
+
