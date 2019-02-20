@@ -78,3 +78,28 @@ rules:
       - "**/*.go"
     justification:
       - 例えば初期化の際に、必須の値が取得できないようなケースで、panicを利用して中断するといった場合が該当します。
+
+  - id: com.example.akiko.7
+    pattern:
+      regexp: instance_class\s*=\s*"db\..+\..+"
+    message: |
+      データベースのスケール変更の際は適用のタイミングに注意してください。
+
+      計画停止が難しい、ダウンタイムを減らしたいといった環境の場合は、Multi-AZ構成、最初から大きめのものを検討して
+      下さい。
+      ボリュームの拡張は比較的実施しやすいですが、縮小の場合はメンテナンスが必要になります。サイジングも注意してください。
+
+    glob:
+      - "terraform/rds.tf"
+
+  - id: com.example.akiko.8
+    pattern:
+      token: apply_immediately =
+    message: |
+      データベースのスケール変更の際は適用のタイミングに注意してください。
+
+      このパラメータを未指定、またはfalseにすると、更新が次回メンテナンスウインドウまでキューされます。
+      なお、インスタンスタイプ変更時にはデータベースが一瞬落ちるので、少し注意が必要になります。
+      https://www.terraform.io/docs/providers/aws/r/db_instance.html#apply_immediately
+    glob:
+      - "terraform/rds.tf"
